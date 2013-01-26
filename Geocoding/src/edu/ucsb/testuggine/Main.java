@@ -14,12 +14,15 @@ import org.kohsuke.args4j.Option;
 
 public class Main {
 
-	@Option(name="-rest",usage="Specify the path to an .offerings file")
-	private String restFile = "";
+	@Option(name="-yelp",usage="Flags if Yelp must be used")
+	private boolean yelp = false;
 
-	@Option(name="-rev",usage="Specify the path to a .reviews file")
-	private String revFile = "";
+	@Option(name="-ta",usage="Flags if TA must be used")
+	private boolean ta = false;
 
+	@Option(name="-ot",usage="Flags if OT must be used")
+	private boolean ot = false;
+	
 	// receives other command line parameters than options
 	@Argument
 	private List<String> arguments = new ArrayList<String>();
@@ -67,8 +70,15 @@ public class Main {
 			return;
 		}
 
-		@SuppressWarnings("unused")
-		TADBInterface tadb = new TADBInterface(restFile, revFile);
+		if (yelp) {
+			YelpGeo yelpgeo = new YelpGeo();
+		}
+		if (ta) {
+			TAGeo tageo = new TAGeo();
+		}
+		if (ot) {
+			OTGeo otgeo = new OTGeo();
+		}
 
 	}
 }
