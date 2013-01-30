@@ -33,7 +33,16 @@ public class YelpGeo {
 
 		while (res.next()) {
 			String id = res.getString("id");
-			String rawData = getGoogleJSON(res);
+			
+			String addressNum = processField(res, "addressNum");
+			String addressStreet = processField(res, "addressStreet");
+			String addressCity = processField(res, "addressCity");
+			String addressRegion = processField(res, "addressRegion");
+			String addressZip = processField(res, "addressZip");
+			
+			if (addressStreet.isEmpty() || addressCity.isEmpty() || addressRegion.isEmpty()) continue;
+			
+			String rawData = getGoogleJSON(addressNum, addressStreet, addressCity, addressRegion, addressZip);
 			String[] coords = processJSON(rawData);
 
 			String insertionQuery = "INSERT INTO `YelpCoords` (`restaurant_id`, `latitude`, "
@@ -61,6 +70,7 @@ public class YelpGeo {
 			prep.close();
 		}
 	}
+
 
 	private boolean alreadyThere(String id) throws SQLException {
 		String alreadyExistsCheckQuery = "SELECT * FROM  `YelpCoords` WHERE  `restaurant_id` =  ?";
@@ -120,18 +130,9 @@ public class YelpGeo {
 		return retVal;
 	}
 
-	private String getGoogleJSON(ResultSet res) throws SQLException {
-		String addressNum = res.getString("addressNum").trim()
-				.replaceAll(" ", "+");
-		String addressStreet = res.getString("addressStreet").trim()
-				.replaceAll(" ", "+");
-		String addressCity = res.getString("addressCity").trim()
-				.replaceAll(" ", "+");
-		String addressRegion = res.getString("addressRegion").trim()
-				.replaceAll(" ", "+");
-		String addressZip = res.getString("addressZip").trim()
-				.replaceAll(" ", "+");
-
+	private String getGoogleJSON(String addressNum, String addressStreet,
+			String addressCity, String addressRegion, String addressZip) {
+		
 		String prefix = "http://maps.googleapis.com/maps/api/geocode/json?address=";
 		String postfix = "&sensor=false";
 
@@ -140,6 +141,12 @@ public class YelpGeo {
 
 		String result = makeRequest(prefix + geoString + postfix);
 		return result;
+	}
+	
+	private String processField(ResultSet res, String fieldName) throws SQLException {
+		String result = res.getString(fieldName);
+		if (result == null || result.isEmpty()) return "";
+		else return result.trim().replaceAll(" ", "+");
 	}
 
 	private static String makeRequest(String url) {
