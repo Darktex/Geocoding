@@ -15,10 +15,12 @@ import org.jsoup.nodes.Document;
 public class TAGeo {
 	JSONParser parser;
 	MySQLConnection db;
+	boolean verbose;
 
-	public TAGeo() throws SQLException, ParseException {
+	public TAGeo(boolean verbose) throws SQLException, ParseException {
 		parser = new JSONParser();
 		db = new MySQLConnection();
+		this.verbose = verbose;
 
 		String selectionQuery = "SELECT id, "
 				+ "addressNum, addressStreet, addressCity, addressRegion, addressZip"
@@ -34,9 +36,8 @@ public class TAGeo {
 
 			String insertionQuery = "INSERT INTO `YelpCoords` (`restaurant_id`, `latitude`, "
 					+ "`longitude`) " + "VALUES (?, ?, ?);";
-			PreparedStatement prep = db.con
-					.prepareStatement(insertionQuery);
-			if (!alreadyThere(id)) {	
+			PreparedStatement prep = db.con.prepareStatement(insertionQuery);
+			if (!alreadyThere(id)) {
 				prep.setString(1, id);
 				prep.setString(2, coords[0]);
 				prep.setString(3, coords[1]);
@@ -52,7 +53,8 @@ public class TAGeo {
 				.prepareStatement(alreadyExistsCheckQuery);
 		checkStatement.setString(1, id); // the ID of this restaurant
 		ResultSet alreadyExistsRes = checkStatement.executeQuery();
-		if (!alreadyExistsRes.first() ) return false;
+		if (!alreadyExistsRes.first())
+			return false;
 		return true;
 	}
 

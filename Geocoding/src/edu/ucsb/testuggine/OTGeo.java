@@ -15,10 +15,12 @@ import org.jsoup.nodes.Document;
 public class OTGeo {
 	JSONParser parser;
 	MySQLConnection db;
+	boolean verbose;
 
-	public OTGeo() throws SQLException, ParseException {
+	public OTGeo(boolean verbose) throws SQLException, ParseException {
 		parser = new JSONParser();
 		db = new MySQLConnection();
+		this.verbose = verbose;
 
 		String selectionQuery = "SELECT id, "
 				+ "addressNum, addressStreet, addressCity, addressRegion, addressZip"

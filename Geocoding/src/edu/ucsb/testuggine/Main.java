@@ -23,6 +23,9 @@ public class Main {
 	@Option(name="-ot",usage="Flags if OT must be used")
 	private boolean ot = false;
 	
+	@Option(name="-verbose",usage="Flags if OT must be used")
+	private boolean verbose = false;
+	
 	// receives other command line parameters than options
 	@Argument
 	private List<String> arguments = new ArrayList<String>();
@@ -59,25 +62,25 @@ public class Main {
 			// you'll get this exception. this will report
 			// an error message.
 			System.err.println(e.getMessage());
-			System.err.println("java TADBInterface.jar [options...] arguments...");
+			System.err.println("java Geocoding.jar [options...] arguments...");
 			// print the list of available options
 			parser.printUsage(System.err);
 			System.err.println();
 
 			// print option sample. This is useful some time
-			System.err.println("  Usage: java TADBInterface.jar "+parser.printExample(ALL));
+			System.err.println("  Usage: java Geocoding.jar "+parser.printExample(ALL));
 
 			return;
 		}
 
 		if (yelp) {
-			YelpGeo yelpgeo = new YelpGeo();
+			YelpGeo yelpgeo = new YelpGeo(verbose);
 		}
 		if (ta) {
-			TAGeo tageo = new TAGeo();
+			TAGeo tageo = new TAGeo(verbose);
 		}
 		if (ot) {
-			OTGeo otgeo = new OTGeo();
+			OTGeo otgeo = new OTGeo(verbose);
 		}
 
 	}
