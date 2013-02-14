@@ -8,4 +8,8 @@ public class OverQueryLimitException extends GoogleGeocodingException
     {   
         super(message);         
     }       
+	public OverQueryLimitException()          
+    {   
+        super("Over query limit!");         
+    }       
 }

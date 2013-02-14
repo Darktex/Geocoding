@@ -12,6 +12,8 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
+import edu.ucsb.testuggine.geocodingexceptions.ZeroResultsException;
+
 public class Main {
 
 	@Option(name="-yelp",usage="Flags if Yelp must be used")
@@ -26,15 +28,18 @@ public class Main {
 	@Option(name="-verbose",usage="Flags if OT must be used")
 	private boolean verbose = false;
 	
+	@Option(name="-start",usage="Specify the path to a .reviews file")
+	private int startindex = 0;
+	
 	// receives other command line parameters than options
 	@Argument
 	private List<String> arguments = new ArrayList<String>();
 
-	public static void main(String[] args) throws IOException, SQLException, ParseException {
+	public static void main(String[] args) throws IOException, SQLException, ParseException, ZeroResultsException, InterruptedException {
 		new Main().doMain(args);
 	}
 
-	public void doMain(String[] args) throws IOException, SQLException, ParseException {
+	public void doMain(String[] args) throws IOException, SQLException, ParseException, ZeroResultsException, InterruptedException {
 
 		for (String arg : args)
 			arguments.add(arg);
@@ -74,7 +79,7 @@ public class Main {
 		}
 
 		if (yelp) {
-			YelpGeo yelpgeo = new YelpGeo(verbose);
+			YelpGeo yelpgeo = new YelpGeo(verbose, startindex);
 		}
 		if (ta) {
 			TAGeo tageo = new TAGeo(verbose);

@@ -7,5 +7,9 @@ public class ZeroResultsException extends GoogleGeocodingException
 	public ZeroResultsException(String message)          
     {   
         super(message);         
-    }       
+    }
+
+	public ZeroResultsException() {
+		super("No results found");
+	}       
 }

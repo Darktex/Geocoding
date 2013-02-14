@@ -7,5 +7,10 @@ public class RequestDeniedException extends GoogleGeocodingException
 	public RequestDeniedException(String message)          
     {   
         super(message);         
-    }       
+    }      
+	
+	public RequestDeniedException()          
+    {   
+        super("Request denied!");         
+    } 
 }

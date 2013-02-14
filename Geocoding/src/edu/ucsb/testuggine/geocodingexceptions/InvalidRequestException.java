@@ -7,5 +7,10 @@ public class InvalidRequestException extends GoogleGeocodingException
 	public InvalidRequestException(String message)          
     {   
         super(message);         
-    }       
+    }     
+	
+	public InvalidRequestException()          
+    {   
+        super("Invalid Request!");         
+    }    
 }
