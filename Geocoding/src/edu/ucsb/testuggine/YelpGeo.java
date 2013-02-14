@@ -34,6 +34,8 @@ public class YelpGeo {
 				.prepareStatement(selectionQuery);
 		ResultSet res = checkStatement.executeQuery();
 		res.absolute(index);
+		int internalIndex = index;
+		int times = 0;
 
 		while (res.next()) {
 			String id = res.getString("id");
@@ -61,7 +63,14 @@ public class YelpGeo {
 				try {
 					throw new OverQueryLimitException();
 				} catch (OverQueryLimitException e) {
-					Thread.sleep(10000); // 10s sleep
+					if (times < 10) {
+						Thread.sleep(10000); // 10s sleep
+						times++;
+					}
+					else {
+						Thread.sleep(3600000); // sleeps 1h
+						times = 0;
+					}
 					res.previous(); 
 					continue; // This makes it 
 				}
@@ -79,6 +88,7 @@ public class YelpGeo {
 				}
 			
 			String[] coords = processJSON(rawData);
+			internalIndex++;
 
 			String insertionQuery = "INSERT INTO `YelpCoords` (`restaurant_id`, `latitude`, "
 					+ "`longitude`, `isApprox`) " + "VALUES (?, ?, ?, ?);";
@@ -93,13 +103,14 @@ public class YelpGeo {
 				else if (coords[2].equals("false")) approx = false;
 				else throw new IllegalStateException("'Approx' didn't return a legal value");
 				prep.setBoolean(4, approx);
-				if (verbose)
-					StdOut.println("----\n" + prep + "\n--------");
+				if (verbose) {
+					StdOut.println("\n" + internalIndex + ") " + prep);
+				}
 				prep.execute();
 			}
 			else {
-				if (verbose)
-					StdOut.println("Restaurant " + id
+				if (verbose) 
+					StdOut.println(internalIndex + ") " + id
 							+ " already in the DB. Skipping...");
 			}
 			prep.close();
